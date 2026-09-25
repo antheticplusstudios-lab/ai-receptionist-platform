@@ -42,7 +42,7 @@ function KnowledgeDrafts() {
       if (!("text" in r)) return;
       setError("");
       setContent((prev) => (prev.trim() ? `${prev}\n\n--- ${r.url} ---\n${r.text}` : r.text).slice(0, 60000));
-      if (!businessName && r.title) setBusinessName(r.title.split(/[|–—-]/)[0].trim().slice(0, 200));
+      if (!businessName && r.title) setBusinessName((r.title.split(/[|–—-]/)[0] ?? r.title).trim().slice(0, 200));
       setUrl("");
       toast.success(`Pulled ${r.text.length.toLocaleString()} characters from the page`);
     },
