@@ -3,6 +3,7 @@ import { BarChart3, Check, Copy, Lock, ShieldCheck, TriangleAlert } from "lucide
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ReactivationModal } from "@/components/reactivation-modal";
+import { TestChatPanel } from "@/components/test-chat-panel";
 import { useInstances } from "@/hooks/use-portal";
 import { automations } from "@/lib/automations";
 import { daysRemaining, scriptTag, statusClass, statusLabels } from "@/lib/portal";
@@ -42,8 +43,9 @@ function Page() {
   const meta = automations.find((a) => a.slug === instance.automation_slug);
   const left = daysRemaining(instance.expires_at);
   const frozen = instance.status === "suspended" || instance.status === "revoked";
-  const active = instance.status === "paid" && left > 0 && !frozen;
-  const expired = instance.status === "paid" && left === 0;
+  const live = instance.status === "paid" || instance.status === "active";
+  const active = live && left > 0 && !frozen;
+  const expired = live && left === 0;
   const script = scriptTag({ script_token: instance.script_token ?? "", client_id: instance.client_id ?? "" });
 
   return (
@@ -124,6 +126,8 @@ function Page() {
           </div>
         </section>
       </div>
+
+      <TestChatPanel automationId={instance.id} disabled={!active} />
 
       <section className="mt-6 rounded-3xl border border-border bg-card p-6">
         <h2 className="text-lg font-extrabold">Business context & AI instructions</h2>

@@ -37,6 +37,7 @@ import { Route as AuthenticatedDashboardProfileRouteImport } from './routes/_aut
 import { Route as AuthenticatedStaffPaymentsRouteImport } from './routes/_authenticated.staff.payments'
 import { Route as AuthenticatedDashboardAutomationsIndexRouteImport } from './routes/_authenticated.dashboard.automations.index'
 import { Route as AuthenticatedDashboardAutomationsIdRouteImport } from './routes/_authenticated.dashboard.automations.$id'
+import { Route as ApiPublicHooksLifecycleRouteImport } from './routes/api/public/hooks/lifecycle'
 import { Route as ApiPublicWidgetChatRouteImport } from './routes/api/public/widget/chat'
 import { Route as ApiPublicWidgetConfigRouteImport } from './routes/api/public/widget/config'
 import { Route as ApiPublicWidgetScriptRouteImport } from './routes/api/public/widget/script'
@@ -195,6 +196,11 @@ const AuthenticatedDashboardAutomationsIdRoute =
     path: '/automations/$id',
     getParentRoute: () => AuthenticatedDashboardRoute,
   } as any)
+const ApiPublicHooksLifecycleRoute = ApiPublicHooksLifecycleRouteImport.update({
+  id: '/api/public/hooks/lifecycle',
+  path: '/api/public/hooks/lifecycle',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicWidgetChatRoute = ApiPublicWidgetChatRouteImport.update({
   id: '/api/public/widget/chat',
   path: '/api/public/widget/chat',
@@ -238,6 +244,7 @@ export interface FileRoutesByFullPath {
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/dashboard/': typeof AuthenticatedDashboardIndexRoute
   '/dashboard/automations/$id': typeof AuthenticatedDashboardAutomationsIdRoute
+  '/api/public/hooks/lifecycle': typeof ApiPublicHooksLifecycleRoute
   '/api/public/widget/chat': typeof ApiPublicWidgetChatRoute
   '/api/public/widget/config': typeof ApiPublicWidgetConfigRoute
   '/api/public/widget/script': typeof ApiPublicWidgetScriptRoute
@@ -268,6 +275,7 @@ export interface FileRoutesByTo {
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/dashboard': typeof AuthenticatedDashboardIndexRoute
   '/dashboard/automations/$id': typeof AuthenticatedDashboardAutomationsIdRoute
+  '/api/public/hooks/lifecycle': typeof ApiPublicHooksLifecycleRoute
   '/api/public/widget/chat': typeof ApiPublicWidgetChatRoute
   '/api/public/widget/config': typeof ApiPublicWidgetConfigRoute
   '/api/public/widget/script': typeof ApiPublicWidgetScriptRoute
@@ -302,6 +310,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/dashboard/': typeof AuthenticatedDashboardIndexRoute
   '/_authenticated/dashboard/automations/$id': typeof AuthenticatedDashboardAutomationsIdRoute
+  '/api/public/hooks/lifecycle': typeof ApiPublicHooksLifecycleRoute
   '/api/public/widget/chat': typeof ApiPublicWidgetChatRoute
   '/api/public/widget/config': typeof ApiPublicWidgetConfigRoute
   '/api/public/widget/script': typeof ApiPublicWidgetScriptRoute
@@ -336,6 +345,7 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/dashboard/'
     | '/dashboard/automations/$id'
+    | '/api/public/hooks/lifecycle'
     | '/api/public/widget/chat'
     | '/api/public/widget/config'
     | '/api/public/widget/script'
@@ -366,6 +376,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/dashboard'
     | '/dashboard/automations/$id'
+    | '/api/public/hooks/lifecycle'
     | '/api/public/widget/chat'
     | '/api/public/widget/config'
     | '/api/public/widget/script'
@@ -399,6 +410,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/'
     | '/_authenticated/dashboard/'
     | '/_authenticated/dashboard/automations/$id'
+    | '/api/public/hooks/lifecycle'
     | '/api/public/widget/chat'
     | '/api/public/widget/config'
     | '/api/public/widget/script'
@@ -414,6 +426,7 @@ export interface RootRouteChildren {
   AutomationsSlugRoute: typeof AutomationsSlugRoute
   AutomationsIndexRoute: typeof AutomationsIndexRoute
   CheckoutIndexRoute: typeof CheckoutIndexRoute
+  ApiPublicHooksLifecycleRoute: typeof ApiPublicHooksLifecycleRoute
   ApiPublicWidgetChatRoute: typeof ApiPublicWidgetChatRoute
   ApiPublicWidgetConfigRoute: typeof ApiPublicWidgetConfigRoute
   ApiPublicWidgetScriptRoute: typeof ApiPublicWidgetScriptRoute
@@ -617,6 +630,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardAutomationsIdRouteImport
       parentRoute: typeof AuthenticatedDashboardRoute
     }
+    '/api/public/hooks/lifecycle': {
+      id: '/api/public/hooks/lifecycle'
+      path: '/api/public/hooks/lifecycle'
+      fullPath: '/api/public/hooks/lifecycle'
+      preLoaderRoute: typeof ApiPublicHooksLifecycleRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/widget/chat': {
       id: '/api/public/widget/chat'
       path: '/api/public/widget/chat'
@@ -722,6 +742,7 @@ const rootRouteChildren: RootRouteChildren = {
   AutomationsSlugRoute: AutomationsSlugRoute,
   AutomationsIndexRoute: AutomationsIndexRoute,
   CheckoutIndexRoute: CheckoutIndexRoute,
+  ApiPublicHooksLifecycleRoute: ApiPublicHooksLifecycleRoute,
   ApiPublicWidgetChatRoute: ApiPublicWidgetChatRoute,
   ApiPublicWidgetConfigRoute: ApiPublicWidgetConfigRoute,
   ApiPublicWidgetScriptRoute: ApiPublicWidgetScriptRoute,

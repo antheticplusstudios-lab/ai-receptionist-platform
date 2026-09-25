@@ -1,6 +1,8 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { Check, CheckCircle2, Copy, ExternalLink, Globe, TriangleAlert } from "lucide-react";
 import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { AdminPage, DataTable, Loading, Panel, StatusPill, money, shortDate, timeAgo } from "@/components/admin-ui";
 import { useAllPayments, useReviewPayment } from "@/hooks/use-admin";
@@ -22,14 +24,89 @@ type Payment = {
   rejection_reason: string | null;
 };
 
+type ApprovalResult = {
+  crawled?: boolean;
+  snippet?: string;
+  automationId?: string | null;
+  crawlUrl?: string;
+  crawlChars?: number;
+};
+
+function ApprovalModal({ result, payment, onClose }: { result: ApprovalResult; payment: Payment; onClose: () => void }) {
+  const [copied, setCopied] = useState(false);
+  return (
+    <Dialog open onOpenChange={(o) => !o && onClose()}>
+      <DialogContent className="max-w-xl">
+        <DialogHeader>
+          <DialogTitle className="flex items-center gap-2">
+            <CheckCircle2 className="h-5 w-5 text-primary" /> Approved and live
+          </DialogTitle>
+          <DialogDescription>
+            {payment.automation_slug} for {payment.sender_name} is active. Send them this script.
+          </DialogDescription>
+        </DialogHeader>
+        <div
+          className={`flex items-start gap-3 rounded-xl p-3 text-sm ${
+            result.crawled ? "bg-secondary" : "bg-destructive/10 text-destructive"
+          }`}
+        >
+          {result.crawled ? <Globe className="mt-0.5 h-4 w-4 shrink-0 text-primary" /> : <TriangleAlert className="mt-0.5 h-4 w-4 shrink-0" />}
+          <div>
+            <p className="font-bold">{result.crawled ? "Website crawled" : "Website couldn't be reached"}</p>
+            <p className="text-xs opacity-80">
+              {result.crawled
+                ? `${(result.crawlChars ?? 0).toLocaleString()} characters saved from ${result.crawlUrl} to the knowledge base.`
+                : `Add knowledge manually on the Knowledge Drafts page${result.crawlUrl ? ` (tried ${result.crawlUrl})` : ""}.`}
+            </p>
+          </div>
+        </div>
+        {result.snippet ? (
+          <>
+            <pre className="overflow-x-auto whitespace-pre-wrap break-all rounded-xl bg-muted p-4 text-xs">
+              <code>{result.snippet}</code>
+            </pre>
+            <div className="flex flex-wrap gap-2">
+              <Button
+                onClick={() => {
+                  void navigator.clipboard.writeText(result.snippet ?? "");
+                  setCopied(true);
+                  setTimeout(() => setCopied(false), 1500);
+                }}
+              >
+                {copied ? <Check /> : <Copy />} {copied ? "Copied" : "Copy script"}
+              </Button>
+              <Button variant="outline" asChild>
+                <Link to="/admin/automations">
+                  <ExternalLink /> Open automations
+                </Link>
+              </Button>
+            </div>
+          </>
+        ) : (
+          <p className="text-sm text-muted-foreground">This payment isn't linked to an automation, so no script was created.</p>
+        )}
+      </DialogContent>
+    </Dialog>
+  );
+}
+
 function VerificationCard({ payment }: { payment: Payment }) {
   const review = useReviewPayment();
   const [rejecting, setRejecting] = useState(false);
   const [reason, setReason] = useState("");
   const [decided, setDecided] = useState(false);
+  const [result, setResult] = useState<ApprovalResult | null>(null);
 
   const approve = () => {
-    review.mutate({ paymentId: payment.id, approve: true, reason: "" }, { onSuccess: () => setDecided(true) });
+    review.mutate(
+      { paymentId: payment.id, approve: true, reason: "" },
+      {
+        onSuccess: (r: unknown) => {
+          setDecided(true);
+          setResult((r ?? {}) as ApprovalResult);
+        },
+      },
+    );
   };
   const reject = () => {
     review.mutate({ paymentId: payment.id, approve: false, reason }, { onSuccess: () => setDecided(true) });
@@ -37,6 +114,7 @@ function VerificationCard({ payment }: { payment: Payment }) {
 
   return (
     <div className="flex flex-col gap-3 rounded-2xl border border-border bg-card p-5 shadow-sm">
+      {result && <ApprovalModal result={result} payment={payment} onClose={() => setResult(null)} />}
       <div>
         <p className="text-2xl font-extrabold tabular-nums">{money(payment.amount)}</p>
         <p className="text-sm font-semibold">{payment.automation_slug}</p>
