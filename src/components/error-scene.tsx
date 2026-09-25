@@ -16,9 +16,9 @@ export function ErrorScene({ code, title, children }: { code: string; title: str
           <div className="err-orbit absolute inset-0">
             <span className="absolute left-1/2 top-0 h-3 w-3 -translate-x-1/2 rounded-full bg-primary shadow-[0_0_16px_var(--color-primary)]" />
           </div>
-          <div className="err-bob absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+          <div className="err-bob absolute left-1/2 top-1/2">
             <div className="relative">
-              <span className="err-antenna absolute -top-6 left-1/2 block h-6 w-0.5 origin-bottom -translate-x-1/2 bg-foreground/70">
+              <span className="err-antenna absolute -top-6 left-1/2 block h-6 w-0.5 origin-bottom bg-foreground/70">
                 <span className="err-blink absolute -left-1 -top-2 h-2.5 w-2.5 rounded-full bg-primary" />
               </span>
               <div className="flex h-16 w-20 items-center justify-center gap-3 rounded-2xl border-2 border-foreground/80 bg-card">
