@@ -1,0 +1,9 @@
+[
+  {"capability":"code","source":"github antheticplus (TanStack Start)","outcome":"migrate","status":"copied","next_action":"verify build once backend is connected"},
+  {"capability":"schema","source":"Lovable Cloud (22 tables + has_role/provision_automation/review_payment/is_admin/is_staff/validate_promo/claim_staff_invite/run_subscription_lifecycle)","outcome":"migrate","status":"pending","next_action":"repo only contains 4 partial SQL files; rebuild full schema, RLS and functions from generated types + code"},
+  {"capability":"records","source":"old Lovable Cloud database","outcome":"migrate","status":"pending","next_action":"request CSV exports of tables after preview"},
+  {"capability":"auth","source":"Lovable Cloud auth (email + Google via cloud-auth-js)","outcome":"migrate","status":"pending","next_action":"enable Cloud, request users export"},
+  {"capability":"public widget endpoints","source":"/api/public/widget/{script,config,chat}","outcome":"preserve","status":"copied","next_action":"verify after schema"},
+  {"capability":"secrets","source":"Groq pool keys, OpenRouter key (stored in DB)","outcome":"preserve","status":"pending","next_action":"user re-enters in Infrastructure page"},
+  {"capability":"schedule","source":"lifecycle endpoint","outcome":"preserve","status":"not scheduled in source","next_action":"add daily schedule"}
+]
