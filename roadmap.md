@@ -22,7 +22,7 @@
 ## Phase 3 — Backend wiring
 - [x] 3-tier RBAC enforced server-side and in row-level security
 - [x] End-to-end order proven: checkout → pending payment → approve → Active / Paid
-- [ ] Daily lifecycle schedule (the endpoint works; nothing calls it on a timer yet)
+- [x] Daily lifecycle schedule (runs every day at 02:00 UTC)
 - [ ] Transactional emails — blocked on a sending-domain decision
 
 ## Phase 4 — Experience polish
@@ -43,5 +43,14 @@
 - [x] Fix white flash on refresh (theme applied before first paint)
 - [x] AI key management (Groq pool, OpenRouter key) owner-only in app + menu
 - [ ] Owner-only database rules on key tables — blocked: migration tool replays old files on the remixed database
-- [ ] One-click approve = crawl + script compile + provisioning
+- [x] One-click approve = crawl + script compile + provisioning
 - [ ] Per-automation pages, 10-task configurator, script auto-regeneration, OpenRouter failover, usage metering, Google integrations, flow tests
+
+## Phase 6 — Migration + top improvements
+- [x] Rebuilt database on Lovable Cloud (22 tables, roles, approval/provisioning logic)
+- [x] Test-your-receptionist chat on client automation page
+- [x] Script delivery popup with crawl summary on payment approval
+- [x] Fetch-page-by-URL on Knowledge Drafts
+- [x] Animated 404 / 500 pages
+- [ ] Old workspace data import — skipped for now by request
+- [ ] "All Automations" catalog manager for admins
