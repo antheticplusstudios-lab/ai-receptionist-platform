@@ -401,15 +401,7 @@ export type Database = {
           message?: string
           status_code?: number
         }
-        Relationships: [
-          {
-            foreignKeyName: "groq_failover_log_key_id_fkey"
-            columns: ["key_id"]
-            isOneToOne: false
-            referencedRelation: "groq_keys"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       groq_keys: {
         Row: {
@@ -537,7 +529,7 @@ export type Database = {
           description?: string
           listed?: boolean
           monthly_price?: number
-          name: string
+          name?: string
           slug: string
           updated_at?: string
           yearly_discount_pct?: number
@@ -605,7 +597,7 @@ export type Database = {
           created_at?: string
           expires_at?: string | null
           id?: string
-          percent_off: number
+          percent_off?: number
         }
         Update: {
           active?: boolean
