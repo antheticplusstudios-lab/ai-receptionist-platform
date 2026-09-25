@@ -16,7 +16,7 @@ function htmlToText(html: string) {
     .trim();
 }
 
-async function crawl(domain: string) {
+export async function crawl(domain: string) {
   const url = /^https?:\/\//.test(domain) ? domain : `https://${domain}`;
   try {
     const res = await fetch(url, { headers: { "User-Agent": "AntheticPlusBot/1.0" }, signal: AbortSignal.timeout(10000) });
@@ -32,14 +32,14 @@ async function crawl(domain: string) {
 export async function runProvisioningPipeline(admin: SupabaseClient, paymentId: string, actorId: string, origin: string) {
   const { data: pay } = await admin.from("payment_submissions").select("automation_id").eq("id", paymentId).single();
   const automationId = pay?.automation_id as string | null;
-  if (!automationId) return { crawled: false, snippet: "" };
+  if (!automationId) return { crawled: false, snippet: "", automationId: null as string | null, crawlUrl: "", crawlChars: 0 };
 
   const { data: inst } = await admin
     .from("automation_instances")
     .select("id, website_domain, client_id, script_token")
     .eq("id", automationId)
     .single();
-  if (!inst) return { crawled: false, snippet: "" };
+  if (!inst) return { crawled: false, snippet: "", automationId, crawlUrl: "", crawlChars: 0 };
 
   const page = await crawl(inst.website_domain);
   if (page.ok && page.text) {
@@ -68,5 +68,5 @@ export async function runProvisioningPipeline(admin: SupabaseClient, paymentId: 
     target: automationId,
     details: { crawled: page.ok, url: page.url },
   });
-  return { crawled: page.ok, snippet };
+  return { crawled: page.ok, snippet, automationId, crawlUrl: page.url, crawlChars: page.text.length };
 }

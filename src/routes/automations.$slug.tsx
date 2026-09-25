@@ -15,7 +15,7 @@ export const Route = createFileRoute("/automations/$slug")({
     await queryClient.ensureQueryData(livePricingQueryOptions);
     const item = automations.find((entry) => entry.slug === slug);
     if (!item) throw notFound();
-    return { item };
+    return { slug: item.slug };
   },
   head: () => ({
     meta: [
@@ -38,7 +38,8 @@ export const Route = createFileRoute("/automations/$slug")({
 });
 
 function AutomationDetail() {
-  const { item } = Route.useLoaderData();
+  const { slug } = Route.useLoaderData();
+  const item = automations.find((entry) => entry.slug === slug)!;
   const { data: plans } = useSuspenseQuery(livePricingQueryOptions);
   const priced =
     withLivePricing(plans).find((entry) => entry.slug === item.slug) ?? {

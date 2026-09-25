@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useMutation } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "motion/react";
-import { BookOpenText, Check, Copy, Loader2, Save, Sparkles } from "lucide-react";
+import { BookOpenText, Check, Copy, Globe, Link2, Loader2, Save, Sparkles } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { AdminPage, Panel } from "@/components/admin-ui";
@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useAllInstances } from "@/hooks/use-admin";
 import { generateKnowledgeDraft, saveKnowledgeDraft } from "@/lib/knowledge.functions";
+import { scrapeUrl } from "@/lib/improvements.functions";
 
 export const Route = createFileRoute("/_authenticated/admin/knowledge")({
   head: () => ({
@@ -32,6 +33,21 @@ function KnowledgeDrafts() {
   const [draft, setDraft] = useState("");
   const [error, setError] = useState("");
   const [copied, setCopied] = useState(false);
+  const [url, setUrl] = useState("");
+  const scrape = useServerFn(scrapeUrl);
+  const scraper = useMutation({
+    mutationFn: () => scrape({ data: { url } }),
+    onSuccess: (r) => {
+      if ("error" in r && r.error) return setError(r.error);
+      if (!("text" in r)) return;
+      setError("");
+      setContent((prev) => (prev.trim() ? `${prev}\n\n--- ${r.url} ---\n${r.text}` : r.text).slice(0, 60000));
+      if (!businessName && r.title) setBusinessName((r.title.split(/[|–—-]/)[0] ?? r.title).trim().slice(0, 200));
+      setUrl("");
+      toast.success(`Pulled ${r.text.length.toLocaleString()} characters from the page`);
+    },
+    onError: (e: any) => setError(e?.message ?? "Couldn't fetch that page"),
+  });
 
   const gen = useMutation({
     mutationFn: () => generate({ data: { content, businessName } }),
@@ -53,10 +69,10 @@ function KnowledgeDrafts() {
   return (
     <AdminPage
       title="Knowledge Drafts"
-      subtitle="Paste a customer's website content and AI writes a concise receptionist knowledge base — review, edit, then save it to their automation."
+      subtitle="Fetch a customer's web page or paste their content, and AI writes a concise receptionist knowledge base — review, edit, then save it to their automation."
     >
       <div className="grid gap-6 xl:grid-cols-2">
-        <Panel title="1 · Website content" description="Copy text from their site pages, menus, FAQs or brochures.">
+        <Panel title="1 · Website content" description="Fetch any page by its address, or paste text from menus, FAQs or brochures.">
           <div className="space-y-4">
             <div className="grid gap-3 sm:grid-cols-2">
               <Input placeholder="Business name" value={businessName} onChange={(e) => setBusinessName(e.target.value)} />
@@ -73,6 +89,27 @@ function KnowledgeDrafts() {
                 ))}
               </select>
             </div>
+            <form
+              className="flex gap-2"
+              onSubmit={(e) => {
+                e.preventDefault();
+                if (url.trim()) scraper.mutate();
+              }}
+            >
+              <div className="relative flex-1">
+                <Link2 className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                <Input
+                  className="pl-9"
+                  placeholder="https://client-site.com/faq — pull text from a page"
+                  value={url}
+                  onChange={(e) => setUrl(e.target.value)}
+                />
+              </div>
+              <Button type="submit" variant="outline" disabled={!url.trim() || scraper.isPending}>
+                {scraper.isPending ? <Loader2 className="animate-spin" /> : <Globe />}
+                {scraper.isPending ? "Fetching…" : "Fetch page"}
+              </Button>
+            </form>
             <Textarea
               value={content}
               onChange={(e) => setContent(e.target.value)}
