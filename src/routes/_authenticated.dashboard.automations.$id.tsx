@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ReactivationModal } from "@/components/reactivation-modal";
 import { TestChatPanel } from "@/components/test-chat-panel";
+import { TranscriptEvaluator } from "@/components/transcript-evaluator";
 import { useInstances } from "@/hooks/use-portal";
 import { automations } from "@/lib/automations";
 import { daysRemaining, scriptTag, statusClass, statusLabels } from "@/lib/portal";
@@ -128,6 +129,10 @@ function Page() {
       </div>
 
       <TestChatPanel automationId={instance.id} disabled={!active} />
+
+      <div className="mt-6">
+        <TranscriptEvaluator automationId={instance.id} />
+      </div>
 
       <section className="mt-6 rounded-3xl border border-border bg-card p-6">
         <h2 className="text-lg font-extrabold">Business context & AI instructions</h2>
