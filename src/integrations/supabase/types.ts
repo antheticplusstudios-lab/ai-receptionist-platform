@@ -636,6 +636,24 @@ export type Database = {
         }
         Relationships: []
       }
+      system_settings: {
+        Row: {
+          key: string
+          updated_at: string
+          value: Json
+        }
+        Insert: {
+          key: string
+          updated_at?: string
+          value?: Json
+        }
+        Update: {
+          key?: string
+          updated_at?: string
+          value?: Json
+        }
+        Relationships: []
+      }
       tenant_features: {
         Row: {
           automation_id: string
@@ -714,6 +732,62 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "ticket_escalations_automation_id_fkey"
+            columns: ["automation_id"]
+            isOneToOne: false
+            referencedRelation: "automation_instances"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      transcript_evaluations: {
+        Row: {
+          accuracy_score: number
+          automation_id: string | null
+          created_at: string
+          helpfulness_score: number
+          id: string
+          improvements: Json
+          model: string
+          overall_score: number
+          strengths: Json
+          summary: string
+          tone_score: number
+          transcript: string
+          user_id: string
+        }
+        Insert: {
+          accuracy_score?: number
+          automation_id?: string | null
+          created_at?: string
+          helpfulness_score?: number
+          id?: string
+          improvements?: Json
+          model?: string
+          overall_score?: number
+          strengths?: Json
+          summary?: string
+          tone_score?: number
+          transcript: string
+          user_id: string
+        }
+        Update: {
+          accuracy_score?: number
+          automation_id?: string | null
+          created_at?: string
+          helpfulness_score?: number
+          id?: string
+          improvements?: Json
+          model?: string
+          overall_score?: number
+          strengths?: Json
+          summary?: string
+          tone_score?: number
+          transcript?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "transcript_evaluations_automation_id_fkey"
             columns: ["automation_id"]
             isOneToOne: false
             referencedRelation: "automation_instances"
